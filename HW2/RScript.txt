@@ -1,0 +1,51 @@
+# First, read in the data and set it to a dataset RATINGS
+library(readxl)
+RATINGS <- read_excel("Job Ratings.xlsx")
+View(RATINGS)
+
+# Extracting Principal Components on 3 selected variables by Consulting firm (scale=TRUE).
+PCA.RATINGS <- prcomp(RATINGS[2:4], scale=TRUE)
+
+# Names of variables in the PCA object
+names(PCA.RATINGS)
+
+#Interpretation of PCs:
+PCA.RATINGS$rotation
+
+# Relative importance and summary of the PCs
+summary(PCA.RATINGS)
+
+# View data in terms of PCs
+PCA.RATINGS$x
+
+# Make data copyable to Excel
+View(PCA.RATINGS$x)
+
+# Eigenvalues of the data
+m = cor(RATINGS[2:4])
+eigen(m)
+
+# Read in Standardized Original Data from Excel
+STANDARDIZED_RATINGS <- read_excel("Standardized Data.xlsx")
+View(STANDARDIZED_RATINGS)
+
+# Run No Intercept Regression of three original variables (standardized) on PC1
+lmPC1 = lm(PC1 ~ knowhow + problem_solving + accountability, data=STANDARDIZED_RATINGS)
+
+# Run No Intercept Regression of knowhow variable on PC1,PC2,PC3
+lm_knowhow = lm(knowhow ~ PC1 + PC2 + PC3, data=STANDARDIZED_RATINGS)
+
+# Correlation Matrix for Loadings
+View(cor(STANDARDIZED_RATINGS)[5:7,2:4])
+
+# Summary of Variance Explained
+summary(PCA.RATINGS)
+
+PCA.RATINGS$sdev^2
+
+# Fitting Linear Regression on Salary using three PCs
+lm_salary = lm(salary ~ PC1 + PC2 + PC3, data=STANDARDIZED_RATINGS)
+
+#Fitting Linear Regression on Salary using only PC1
+lm_salary1 = lm(salary ~ PC1, data=STANDARDIZED_RATINGS)
+summary(lm_salary1)
